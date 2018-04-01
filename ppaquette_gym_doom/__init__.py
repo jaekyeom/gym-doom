@@ -13,6 +13,7 @@ from .doom_take_cover import DoomTakeCoverEnv
 from .doom_deathmatch import DoomDeathmatchEnv
 from .doom_my_way_home_sparse import DoomMyWayHomeFixedEnv
 from .doom_my_way_home_verySparse import DoomMyWayHomeFixed15Env
+from .doom_my_way_home_ex2 import DoomMyWayHomeEX2Env
 
 # Env registration
 # ==========================
@@ -106,6 +107,13 @@ register(
     reward_threshold=0.5,
 )
 
+register(
+    id='{}/DoomMyWayHomeEX2-v0'.format(USERNAME),
+    entry_point='{}_gym_doom:DoomMyWayHomeEX2Env'.format(USERNAME),
+    max_episode_steps=10000,
+    reward_threshold=0.5,
+)
+
 # Scoreboard registration
 # ==========================
 add_group(
@@ -133,6 +141,7 @@ Levels:
     - #8 Doom Deathmatch
     - #9 Doom MyWayHomeFixed (customized)
     - #10 Doom MyWayHomeFixed15 (customized)
+    - #11 Doom MyWayHomeEX2 (customized)
 
 Goal: 9,000 points
     - Pass all levels
@@ -438,6 +447,36 @@ add_task(
     group='doom',
     summary='Mission #11 - Find the vest in one the 4 rooms.',
     description="""
+This map is designed to improve navigational skills. It is a series of
+interconnected rooms and 1 corridor with a dead end. Each room
+has a separate color. There is a green vest in one of the room.
+The vest is always in the same room. Player must find the vest.
+You always start from fixed room (room no. 10 -- farthest).
+
+Goal: 0.50 point
+    - Find the vest
+
+Rewards:
+    - Plus 1 point for finding the vest
+    - Minus 0.0001 point every 0.028 secs
+
+Ends when:
+    - Vest is found
+    - Timeout (1 minutes - 2,100 frames)
+
+Allowed actions:
+    - MOVE_FORWARD
+    - TURN_RIGHT
+    - TURN_LEFT
+"""
+)
+
+add_task(
+    id='{}/DoomMyWayHomeEX2-v0'.format(USERNAME),
+    group='doom',
+    summary='Mission #12 - Find the vest in one the 4 rooms.',
+    description="""
+This map is adopted from EX2.
 This map is designed to improve navigational skills. It is a series of
 interconnected rooms and 1 corridor with a dead end. Each room
 has a separate color. There is a green vest in one of the room.

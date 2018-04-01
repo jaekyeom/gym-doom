@@ -47,6 +47,7 @@ DOOM_SETTINGS = [
     ['deathmatch.cfg', 'deathmatch.wad', '', 5, [x for x in range(NUM_ACTIONS) if x != 33], 0, 20], # 8 - Deathmatch
     ['my_way_home.cfg', 'my_way_home_sparse.wad', '', 5, [13, 14, 15], -0.22, 0.5],               # 9 - MyWayHomeFixed
     ['my_way_home.cfg', 'my_way_home_verySparse.wad', '', 5, [13, 14, 15], -0.22, 0.5],               # 10 - MyWayHomeFixed15
+    ['my_way_home.cfg', 'my_way_home_ex2.wad', '', 5, [13, 14, 15], -0.22, 0.5],               # 11 - MyWayHomeFixed15
 ]
 
 # Singleton pattern
