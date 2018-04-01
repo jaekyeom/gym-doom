@@ -11,13 +11,17 @@ from gym.utils import seeding
 
 try:
     import doom_py
-    from doom_py import DoomGame, Mode, Button, GameVariable, ScreenFormat, ScreenResolution, Loader
+    from doom_py import DoomGame, Mode, Button, GameVariable, ScreenFormat, ScreenResolution, Loader, doom_fixed_to_double
     from doom_py.vizdoom import ViZDoomUnexpectedExitException, ViZDoomErrorException
 except ImportError as e:
     raise gym.error.DependencyNotInstalled("{}. (HINT: you can install Doom dependencies " +
                                            "with 'pip install doom_py.)'".format(e))
 
 logger = logging.getLogger(__name__)
+
+# Arguments:
+RANDOMIZE_MAPS = 80  # 0 means load default, otherwise randomly load in the id mentioned
+NO_MONSTERS = True  # remove monster spawning
 
 # Constants
 NUM_ACTIONS = 43
@@ -37,10 +41,12 @@ DOOM_SETTINGS = [
     ['defend_the_center.cfg', 'defend_the_center.wad', '', 5, [0, 14, 15], -1, 10],              # 2 - DefendCenter
     ['defend_the_line.cfg', 'defend_the_line.wad', '', 5, [0, 14, 15], -1, 15],                  # 3 - DefendLine
     ['health_gathering.cfg', 'health_gathering.wad', 'map01', 5, [13, 14, 15], 0, 1000],         # 4 - HealthGathering
-    ['my_way_home.cfg', 'my_way_home.wad', '', 5, [13, 14, 15], -0.22, 0.5],                     # 5 - MyWayHome
+    ['my_way_home.cfg', 'my_way_home_dense.wad', '', 5, [13, 14, 15], -0.22, 0.5],                     # 5 - MyWayHome
     ['predict_position.cfg', 'predict_position.wad', 'map01', 3, [0, 14, 15], -0.075, 0.5],      # 6 - PredictPosition
     ['take_cover.cfg', 'take_cover.wad', 'map01', 5, [10, 11], 0, 750],                          # 7 - TakeCover
-    ['deathmatch.cfg', 'deathmatch.wad', '', 5, [x for x in range(NUM_ACTIONS) if x != 33], 0, 20] # 8 - Deathmatch
+    ['deathmatch.cfg', 'deathmatch.wad', '', 5, [x for x in range(NUM_ACTIONS) if x != 33], 0, 20], # 8 - Deathmatch
+    ['my_way_home.cfg', 'my_way_home_sparse.wad', '', 5, [13, 14, 15], -0.22, 0.5],               # 9 - MyWayHomeFixed
+    ['my_way_home.cfg', 'my_way_home_verySparse.wad', '', 5, [13, 14, 15], -0.22, 0.5],               # 10 - MyWayHomeFixed15
 ]
 
 # Singleton pattern
@@ -109,7 +115,17 @@ class DoomEnv(gym.Env):
             self.game.load_config(os.path.join(self.doom_dir, 'assets/%s' % DOOM_SETTINGS[self.level][CONFIG]))
             self.game.set_doom_scenario_path(self.loader.get_scenario_path(DOOM_SETTINGS[self.level][SCENARIO]))
             if DOOM_SETTINGS[self.level][MAP] != '':
-                self.game.set_doom_map(DOOM_SETTINGS[self.level][MAP])
+                if RANDOMIZE_MAPS > 0 and 'labyrinth' in DOOM_SETTINGS[self.level][CONFIG].lower():
+                    if 'fix' in DOOM_SETTINGS[self.level][SCENARIO].lower():
+                        # mapId = 'map%02d'%np.random.randint(1, 23)
+                        mapId = 'map%02d'%np.random.randint(4, 8)
+                    else:
+                        mapId = 'map%02d'%np.random.randint(1, RANDOMIZE_MAPS+1)
+                    print('\t=> Special Config: Randomly Loading Maps. MapID = ' + mapId)
+                    self.game.set_doom_map(mapId)
+                else:
+                    print('\t=> Default map loaded. MapID = ' + DOOM_SETTINGS[self.level][MAP])
+                    self.game.set_doom_map(DOOM_SETTINGS[self.level][MAP])
             self.game.set_doom_skill(DOOM_SETTINGS[self.level][DIFFICULTY])
             self.allowed_actions = DOOM_SETTINGS[self.level][ACTIONS]
             self.game.set_screen_resolution(self.screen_resolution)
@@ -119,6 +135,10 @@ class DoomEnv(gym.Env):
 
         # Algo mode
         if 'human' != self._mode:
+            if NO_MONSTERS:
+                print('\t=> Special Config: Monsters Removed.')
+                self.game.add_game_args('-nomonsters 1')
+            self.game
             self.game.set_window_visible(False)
             self.game.set_mode(Mode.PLAYER)
             self.no_render = False
@@ -138,6 +158,9 @@ class DoomEnv(gym.Env):
 
         # Human mode
         else:
+            if NO_MONSTERS:
+                print('\t=> Special Config: Monsters Removed.')
+                self.game.add_game_args('-nomonsters 1')
             self.game.add_game_args('+freelook 1')
             self.game.set_window_visible(True)
             self.game.set_mode(Mode.SPECTATOR)
@@ -279,6 +302,8 @@ class DoomEnv(gym.Env):
         info['AMMO8'] = state_variables[19]
         info['AMMO9'] = state_variables[20]
         info['AMMO0'] = state_variables[21]
+        info['POSITION_X'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.USER1))
+        info['POSITION_Y'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.USER2))
         return info
 
 

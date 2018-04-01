@@ -13,6 +13,8 @@ ALLOWED_ACTIONS = [
     [0, 14, 15],                                # 6 - PredictPosition
     [10, 11],                                   # 7 - TakeCover
     [x for x in range(NUM_ACTIONS) if x != 33], # 8 - Deathmatch
+    [13, 14, 15],                               # 9 - MyWayHomeFixed
+    [13, 14, 15],                               # 10 - MyWayHomeFixed15
 ]
 
 __all__ = [ 'ToDiscrete', 'ToBox' ]
