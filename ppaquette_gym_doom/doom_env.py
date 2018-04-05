@@ -279,30 +279,29 @@ class DoomEnv(gym.Env):
         info = {
             "LEVEL": self.level
         }
-        if state_variables is None:
-            return info
-        info['KILLCOUNT'] = state_variables[0]
-        info['ITEMCOUNT'] = state_variables[1]
-        info['SECRETCOUNT'] = state_variables[2]
-        info['FRAGCOUNT'] = state_variables[3]
-        info['HEALTH'] = state_variables[4]
-        info['ARMOR'] = state_variables[5]
-        info['DEAD'] = state_variables[6]
-        info['ON_GROUND'] = state_variables[7]
-        info['ATTACK_READY'] = state_variables[8]
-        info['ALTATTACK_READY'] = state_variables[9]
-        info['SELECTED_WEAPON'] = state_variables[10]
-        info['SELECTED_WEAPON_AMMO'] = state_variables[11]
-        info['AMMO1'] = state_variables[12]
-        info['AMMO2'] = state_variables[13]
-        info['AMMO3'] = state_variables[14]
-        info['AMMO4'] = state_variables[15]
-        info['AMMO5'] = state_variables[16]
-        info['AMMO6'] = state_variables[17]
-        info['AMMO7'] = state_variables[18]
-        info['AMMO8'] = state_variables[19]
-        info['AMMO9'] = state_variables[20]
-        info['AMMO0'] = state_variables[21]
+        if state_variables is not None:
+            info['KILLCOUNT'] = state_variables[0]
+            info['ITEMCOUNT'] = state_variables[1]
+            info['SECRETCOUNT'] = state_variables[2]
+            info['FRAGCOUNT'] = state_variables[3]
+            info['HEALTH'] = state_variables[4]
+            info['ARMOR'] = state_variables[5]
+            info['DEAD'] = state_variables[6]
+            info['ON_GROUND'] = state_variables[7]
+            info['ATTACK_READY'] = state_variables[8]
+            info['ALTATTACK_READY'] = state_variables[9]
+            info['SELECTED_WEAPON'] = state_variables[10]
+            info['SELECTED_WEAPON_AMMO'] = state_variables[11]
+            info['AMMO1'] = state_variables[12]
+            info['AMMO2'] = state_variables[13]
+            info['AMMO3'] = state_variables[14]
+            info['AMMO4'] = state_variables[15]
+            info['AMMO5'] = state_variables[16]
+            info['AMMO6'] = state_variables[17]
+            info['AMMO7'] = state_variables[18]
+            info['AMMO8'] = state_variables[19]
+            info['AMMO9'] = state_variables[20]
+            info['AMMO0'] = state_variables[21]
         info['POSITION_X'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_X))
         info['POSITION_Y'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_Y))
         info['POSITION_Z'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_Z))
