@@ -11,7 +11,7 @@ from gym.utils import seeding
 
 try:
     import doom_py
-    from doom_py import DoomGame, Mode, Button, GameVariable, ScreenFormat, ScreenResolution, Loader, doom_fixed_to_double
+    from doom_py import DoomGame, Mode, Button, GameVariable, ScreenFormat, ScreenResolution, Loader, doom_fixed_to_double, doom_angle_to_double
     from doom_py.vizdoom import ViZDoomUnexpectedExitException, ViZDoomErrorException
 except ImportError as e:
     raise gym.error.DependencyNotInstalled("{}. (HINT: you can install Doom dependencies " +
@@ -303,8 +303,13 @@ class DoomEnv(gym.Env):
         info['AMMO8'] = state_variables[19]
         info['AMMO9'] = state_variables[20]
         info['AMMO0'] = state_variables[21]
-        info['POSITION_X'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.USER1))
-        info['POSITION_Y'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.USER2))
+        info['POSITION_X'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_X))
+        info['POSITION_Y'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_Y))
+        info['POSITION_Z'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.POSITION_Z))
+        info['ANGLE'] = doom_angle_to_double(self.game.get_game_variable(GameVariable.ANGLE))
+        info['VELOCITY_X'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.VELOCITY_X))
+        info['VELOCITY_Y'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.VELOCITY_Y))
+        info['VELOCITY_Z'] = doom_fixed_to_double(self.game.get_game_variable(GameVariable.VELOCITY_Z))
         return info
 
 
